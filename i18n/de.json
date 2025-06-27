@@ -24,7 +24,7 @@
   },
   "config": {
     "aux": {
-      "description": "Gerät, das seinen Verbrauch basierend auf verfügbarem Überschuss (z. B. smarter Heizstab) selbstständig anpasst. evcc erwartet, dass dieses Gerät selbstständig seine Leistungsaufnahme reduziert, wenn es notwendig ist.",
+      "description": "Gerät, das seinen Verbrauch basierend auf verfügbarem Überschuss (z. B. smarter Heizstab) selbstständig anpasst. Sourceful Energy erwartet, dass dieses Gerät selbstständig seine Leistungsaufnahme reduziert, wenn es notwendig ist.",
       "titleAdd": "Intelligenten Verbraucher hinzufügen",
       "titleEdit": "Intelligenten Verbraucher bearbeiten"
     },
@@ -53,7 +53,7 @@
     },
     "control": {
       "description": "Normalerweise sind die Standardwerte in Ordnung. Ändere nur etwas, wenn du weißt, was du tust.",
-      "descriptionInterval": "Regelkreis Aktualisierungszyklus in Sekunden. Definiert, wie oft evcc Messdaten liest, die Ladeleistung anpasst und die Benutzeroberfläche aktualisiert. Kurze Intervalle (< 30s) können zu Oszillationen und unerwünschtem Verhalten führen.",
+      "descriptionInterval": "Regelkreis Aktualisierungszyklus in Sekunden. Definiert, wie oft Sourceful Energy Messdaten liest, die Ladeleistung anpasst und die Benutzeroberfläche aktualisiert. Kurze Intervalle (< 30s) können zu Oszillationen und unerwünschtem Verhalten führen.",
       "descriptionResidualPower": "Verschiebt den Betriebspunkt des Regelkreises. Wenn du eine Hausbatterie hast, wird empfohlen, einen Wert von 100 W einzustellen. Auf diese Weise erhält die Batterie eine leichte Priorität gegenüber dem Netzbezug.",
       "labelInterval": "Aktualisierungsintervall",
       "labelResidualPower": "Residualleistung",
@@ -133,7 +133,7 @@
     },
     "general": {
       "cancel": "Abbrechen",
-      "customHelp": "Erstelle ein benutzerdefiniertes Gerät mit evcc's Plugin-System.",
+      "customHelp": "Erstelle ein benutzerdefiniertes Gerät mit Sourceful Energy's Plugin-System.",
       "customOption": "Benutzerdefiniertes Gerät",
       "delete": "Löschen",
       "docsLink": "Siehe Dokumentation.",
@@ -157,7 +157,7 @@
       "titleEdit": "Netzzähler bearbeiten"
     },
     "hems": {
-      "description": "evcc mit einem anderen Heimenergiemanagementsystem verbinden.",
+      "description": "Sourceful Energy mit einem anderen Heimenergiemanagementsystem verbinden.",
       "title": "HEMS"
     },
     "icon": {
@@ -295,8 +295,8 @@
       "baudrate": "Baudrate",
       "comset": "ComSet",
       "connection": "Modbus Verbindung",
-      "connectionHintSerial": "Das Gerät ist direkt an evcc über eine RS485 Schnittstelle angeschlossen.",
-      "connectionHintTcpip": "Das Gerät ist von evcc aus über LAN/Wifi erreichbar.",
+      "connectionHintSerial": "Das Gerät ist direkt an Sourceful Energy über eine RS485 Schnittstelle angeschlossen.",
+      "connectionHintTcpip": "Das Gerät ist von Sourceful Energy aus über LAN/Wifi erreichbar.",
       "connectionValueSerial": "Seriell / USB",
       "connectionValueTcpip": "Netzwerk",
       "device": "Gerätename",
@@ -317,8 +317,8 @@
     },
     "mqtt": {
       "authentication": "Authentifizierung",
-      "description": "Verbinde evcc mit einem MQTT-Broker, um Daten mit anderen Systemen in deinem Netzwerk auszutauschen.",
-      "descriptionClientId": "Autor der Nachrichten. Wenn leer, wird `evcc-[rand]` verwendet.",
+      "description": "Verbinde Sourceful Energy mit einem MQTT-Broker, um Daten mit anderen Systemen in deinem Netzwerk auszutauschen.",
+      "descriptionClientId": "Autor der Nachrichten. Wenn leer, wird `Sourceful Energy-[rand]` verwendet.",
       "descriptionTopic": "Leer lassen, um das Publizieren zu deaktivieren.",
       "labelBroker": "Broker",
       "labelCaCert": "Serverzertifikat (CA)",
@@ -393,7 +393,7 @@
       "restartRequiredDescription": "Bitte neu starten, um die Änderungen zu übernehmen.",
       "restartRequiredMessage": "Konfiguration geändert.",
       "restartingDescription": "Bitte warten …",
-      "restartingMessage": "evcc wird neu gestartet."
+      "restartingMessage": "Sourceful Energy wird neu gestartet."
     },
     "tariffs": {
       "description": "Hinterlege deine Stromtarife, um die Kosten zu berechnen.",
@@ -442,7 +442,7 @@
   "footer": {
     "community": {
       "greenEnergy": "Sonne",
-      "greenEnergySub1": "über evcc geladen",
+      "greenEnergySub1": "über Sourceful Energy geladen",
       "greenEnergySub2": "seit Oktober 2022",
       "greenShare": "Sonnenanteil",
       "greenShareSub1": "Leistung bereitgestellt durch",
@@ -480,15 +480,15 @@
       "becomeSponsorExtended": "Unterstütze uns direkt. Es gibt auch Sticker.",
       "confetti": "Lust auf Konfetti?",
       "confettiPromise": "Es gibt auch Sticker und digitales Konfetti",
-      "sticker": "… oder evcc Sticker?",
+      "sticker": "… oder Sourceful Energy Sticker?",
       "supportUs": "Unsere Mission: Sonne tanken zum Standard machen. Zusammen mit Ihrer finanziellen Unterstützung, können wir es ermöglichen.",
-      "thanks": "Vielen Dank, {sponsor}! Dein Beitrag hilft, evcc weiterzuentwickeln.",
+      "thanks": "Vielen Dank, {sponsor}! Dein Beitrag hilft, Sourceful Energy weiterzuentwickeln.",
       "titleNoSponsor": "Unterstütze uns",
       "titleSponsor": "Du bist Unterstützer",
       "titleTrial": "Testmodus",
       "titleVictron": "Unterstützt von Victron Energy",
       "trial": "Du befindest dich im Testmodus und kannst alle Funktionen nutzen. Wir freuen uns, wenn du Sponsor wirst.",
-      "victron": "Du verwendest evcc auf Victron Energy Hardware und hast Zugriff auf alle Funktionen."
+      "victron": "Du verwendest Sourceful Energy auf Victron Energy Hardware und hast Zugriff auf alle Funktionen."
     },
     "telemetry": {
       "optIn": "Ich möchte meine Ladedaten teilen.",
@@ -505,7 +505,7 @@
       "modalTitle": "Neue Version verfügbar",
       "modalUpdate": "Installieren",
       "modalUpdateNow": "Jetzt installieren",
-      "modalUpdateStarted": "Starte die neue Version von evcc…",
+      "modalUpdateStarted": "Starte die neue Version von Sourceful Energy…",
       "modalUpdateStatusStart": "Installation gestartet:"
     }
   },
@@ -558,8 +558,8 @@
     "restart": {
       "cancel": "Abbrechen",
       "confirm": "Ja, neu starten!",
-      "description": "Unter normalen Umständen sollte ein Neustart nicht notwendig sein. Melde einen Bug, wenn du evcc regelmäßig neu starten musst.",
-      "disclaimer": "Hinweis: evcc beendet sich und verlässt sich darauf, vom Betriebssystem neu gestartet zu werden.",
+      "description": "Unter normalen Umständen sollte ein Neustart nicht notwendig sein. Melde einen Bug, wenn du Sourceful Energy regelmäßig neu starten musst.",
+      "disclaimer": "Hinweis: Sourceful Energy beendet sich und verlässt sich darauf, vom Betriebssystem neu gestartet zu werden.",
       "modalTitle": "Sicher, dass du neu starten möchtest?"
     },
     "restartButton": "Neu starten",
@@ -583,8 +583,8 @@
     "cancel": "Abbrechen",
     "demoMode": "Login ist in Demo-Modus nicht verfügbar.",
     "error": "Login fehlgeschlagen: ",
-    "iframeHint": "Öffne evcc in einem neuen Tab.",
-    "iframeIssue": "Das Passwort ist korrekt, aber dein Browser hat das Authentifizierungscookie abgelehnt. Dies kann passieren, wenn du evcc in einem iframe über HTTP verwendest.",
+    "iframeHint": "Öffne Sourceful Energy in einem neuen Tab.",
+    "iframeIssue": "Das Passwort ist korrekt, aber dein Browser hat das Authentifizierungscookie abgelehnt. Dies kann passieren, wenn du Sourceful Energy in einem iframe über HTTP verwendest.",
     "invalid": "Passwort ist ungültig.",
     "login": "Anmelden",
     "password": "Passwort",
@@ -758,7 +758,7 @@
       "fallbackName": "Fahrzeug",
       "moreActions": "Weitere Aktionen",
       "none": "Kein Fahrzeug",
-      "notReachable": "Fahrzeug war nicht erreichbar. Versuche evcc neu zu starten.",
+      "notReachable": "Fahrzeug war nicht erreichbar. Versuche Sourceful Energy neu zu starten.",
       "targetSoc": "Ladelimit",
       "temp": "Temperatur",
       "tempLimit": "Temperaturlimit",

@@ -1,7 +1,7 @@
 {
 	"start_url": "../",
-	"name": "evcc",
-	"short_name": "evcc",
+        "name": "Sourceful Energy",
+        "short_name": "Sourceful Energy",
 	"theme_color": "#18191a",
 	"background_color": "#18191a",
 	"display": "standalone",

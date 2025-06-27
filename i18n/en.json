@@ -24,7 +24,7 @@
   },
   "config": {
     "aux": {
-      "description": "Device that adjusts its consumption based on available surplus (like smart water heaters). evcc expects that this device reduces its power consumption if needed.",
+      "description": "Device that adjusts its consumption based on available surplus (like smart water heaters). Sourceful Energy expects that this device reduces its power consumption if needed.",
       "titleAdd": "Add Self-Regulating Consumer",
       "titleEdit": "Edit Self-Regulating Consumer"
     },
@@ -53,7 +53,7 @@
     },
     "control": {
       "description": "Usually the default values are fine. Only change them if you know what you are doing.",
-      "descriptionInterval": "Control loop update cycle in seconds. Defines how often evcc reads meter data, adjusts charging power and updates the UI. Short intervals (< 30s) can cause oscillations and unwanted behavior.",
+      "descriptionInterval": "Control loop update cycle in seconds. Defines how often Sourceful Energy reads meter data, adjusts charging power and updates the UI. Short intervals (< 30s) can cause oscillations and unwanted behavior.",
       "descriptionResidualPower": "Shifts the operation point of the control loop. If you have a home battery it's recommended to set a value of 100 W. This way the battery will get slight priority over grid use.",
       "labelInterval": "Update interval",
       "labelResidualPower": "Residual power",
@@ -117,7 +117,7 @@
       "loading": "Loading YAML editor…"
     },
     "eebus": {
-      "description": "Configuration that enables evcc to communicate with other EEBus devices.",
+      "description": "Configuration that enables Sourceful Energy to communicate with other EEBus devices.",
       "title": "EEBus"
     },
     "ext": {
@@ -133,7 +133,7 @@
     },
     "general": {
       "cancel": "Cancel",
-      "customHelp": "Create a user-defined device using evcc's plugin system.",
+      "customHelp": "Create a user-defined device using Sourceful Energy's plugin system.",
       "customOption": "User-defined device",
       "delete": "Delete",
       "docsLink": "See documentation.",
@@ -157,7 +157,7 @@
       "titleEdit": "Edit Grid Meter"
     },
     "hems": {
-      "description": "Connect evcc to another home energy management system.",
+      "description": "Connect Sourceful Energy to another home energy management system.",
       "title": "HEMS"
     },
     "icon": {
@@ -295,8 +295,8 @@
       "baudrate": "Baud rate",
       "comset": "ComSet",
       "connection": "Modbus connection",
-      "connectionHintSerial": "The device is directly connected to evcc via a RS485 interface.",
-      "connectionHintTcpip": "The device is addressable from evcc via LAN/Wifi.",
+      "connectionHintSerial": "The device is directly connected to Sourceful Energy via a RS485 interface.",
+      "connectionHintTcpip": "The device is addressable from Sourceful Energy via LAN/Wifi.",
       "connectionValueSerial": "Serial / USB",
       "connectionValueTcpip": "Network",
       "device": "Device name",
@@ -318,7 +318,7 @@
     "mqtt": {
       "authentication": "Authentication",
       "description": "Connect to an MQTT broker to exchange data with other systems on your network.",
-      "descriptionClientId": "Author of the messages. If empty `evcc-[rand]` is used.",
+      "descriptionClientId": "Author of the messages. If empty `Sourceful Energy-[rand]` is used.",
       "descriptionTopic": "Leave empty to disable publishing.",
       "labelBroker": "Broker",
       "labelCaCert": "Server certificate (CA)",
@@ -393,7 +393,7 @@
       "restartRequiredDescription": "Please restart to see the effect.",
       "restartRequiredMessage": "Configuration changed.",
       "restartingDescription": "Please wait…",
-      "restartingMessage": "Restarting evcc."
+      "restartingMessage": "Restarting Sourceful Energy."
     },
     "tariffs": {
       "description": "Define your energy tariffs to calculate the costs of your charging sessions.",
@@ -442,7 +442,7 @@
   "footer": {
     "community": {
       "greenEnergy": "Solar",
-      "greenEnergySub1": "charged with evcc",
+      "greenEnergySub1": "charged with Sourceful Energy",
       "greenEnergySub2": "since October 2022",
       "greenShare": "Solar share",
       "greenShareSub1": "power provided by",
@@ -480,15 +480,15 @@
       "becomeSponsorExtended": "Support us directly to get stickers.",
       "confetti": "Ready for confetti?",
       "confettiPromise": "You get stickers and digital confetti",
-      "sticker": "… or evcc stickers?",
-      "supportUs": "Our mission is to make solar charging the norm. Help evcc by paying what it is worth to you.",
-      "thanks": "Thank you, {sponsor}! Your contribution helps develop evcc further.",
+      "sticker": "… or Sourceful Energy stickers?",
+      "supportUs": "Our mission is to make solar charging the norm. Help Sourceful Energy by paying what it is worth to you.",
+      "thanks": "Thank you, {sponsor}! Your contribution helps develop Sourceful Energy further.",
       "titleNoSponsor": "Support us",
       "titleSponsor": "You are a supporter",
       "titleTrial": "Trial mode",
       "titleVictron": "Sponsored by Victron Energy",
       "trial": "You are in trial mode and can use all features. Please consider supporting the project.",
-      "victron": "You're using evcc on Victron Energy hardware and have access to all features."
+      "victron": "You're using Sourceful Energy on Victron Energy hardware and have access to all features."
     },
     "telemetry": {
       "optIn": "I want to contribute my data.",
@@ -505,7 +505,7 @@
       "modalTitle": "New version available",
       "modalUpdate": "Install",
       "modalUpdateNow": "Install now",
-      "modalUpdateStarted": "Starting the new version of evcc…",
+      "modalUpdateStarted": "Starting the new version of Sourceful Energy…",
       "modalUpdateStatusStart": "Installation started:"
     }
   },
@@ -558,8 +558,8 @@
     "restart": {
       "cancel": "Cancel",
       "confirm": "Yes, restart!",
-      "description": "Under normal circumstances restarting should not be necessary. Please consider filing a bug if you need to restart evcc on a regular basis.",
-      "disclaimer": "Note: evcc will terminate and rely on the operating system to restart the service.",
+      "description": "Under normal circumstances restarting should not be necessary. Please consider filing a bug if you need to restart Sourceful Energy on a regular basis.",
+      "disclaimer": "Note: Sourceful Energy will terminate and rely on the operating system to restart the service.",
       "modalTitle": "Are you sure you want to restart?"
     },
     "restartButton": "Restart",
@@ -583,8 +583,8 @@
     "cancel": "Cancel",
     "demoMode": "Login is not supported in demo mode.",
     "error": "Login failed: ",
-    "iframeHint": "Open evcc in a new tab.",
-    "iframeIssue": "Your password is correct, but your browser seems to have dropped the authentication cookie. This can happen if you run evcc in an iframe via HTTP.",
+    "iframeHint": "Open Sourceful Energy in a new tab.",
+    "iframeIssue": "Your password is correct, but your browser seems to have dropped the authentication cookie. This can happen if you run Sourceful Energy in an iframe via HTTP.",
     "invalid": "Password is invalid.",
     "login": "Login",
     "password": "Password",
@@ -758,7 +758,7 @@
       "fallbackName": "Vehicle",
       "moreActions": "More actions",
       "none": "No vehicle",
-      "notReachable": "Vehicle was not reachable. Try restarting evcc.",
+      "notReachable": "Vehicle was not reachable. Try restarting Sourceful Energy.",
       "targetSoc": "Limit",
       "temp": "Temp.",
       "tempLimit": "Temp. limit",
