@@ -18,14 +18,17 @@ func TestRequiredExternalBatteryMode(t *testing.T) {
 		{api.BatteryUnknown, api.BatteryUnknown, api.BatteryUnknown},
 		{api.BatteryUnknown, api.BatteryNormal, api.BatteryNormal},
 		{api.BatteryUnknown, api.BatteryCharge, api.BatteryCharge},
+		{api.BatteryUnknown, api.BatteryControl, api.BatteryControl},
 
 		{api.BatteryNormal, api.BatteryUnknown, api.BatteryUnknown},
 		{api.BatteryNormal, api.BatteryNormal, api.BatteryUnknown}, // no change required
 		{api.BatteryNormal, api.BatteryCharge, api.BatteryCharge},
+		{api.BatteryNormal, api.BatteryControl, api.BatteryControl},
 
 		{api.BatteryCharge, api.BatteryUnknown, api.BatteryNormal},
 		{api.BatteryCharge, api.BatteryNormal, api.BatteryNormal},
-		{api.BatteryCharge, api.BatteryCharge, api.BatteryUnknown}, // no change required
+		{api.BatteryCharge, api.BatteryCharge, api.BatteryUnknown},   // no change required
+		{api.BatteryControl, api.BatteryControl, api.BatteryUnknown}, // no change required
 	} {
 		t.Logf("%+v", tc)
 
@@ -61,14 +64,17 @@ func TestExternalBatteryModeChange(t *testing.T) {
 		{api.BatteryUnknown, api.BatteryUnknown, api.BatteryNormal},
 		{api.BatteryUnknown, api.BatteryNormal, api.BatteryNormal},
 		{api.BatteryUnknown, api.BatteryCharge, api.BatteryNormal},
+		{api.BatteryUnknown, api.BatteryControl, api.BatteryNormal},
 
 		{api.BatteryNormal, api.BatteryUnknown, api.BatteryNormal},
 		{api.BatteryNormal, api.BatteryNormal, api.BatteryNormal},
 		{api.BatteryNormal, api.BatteryCharge, api.BatteryNormal},
+		{api.BatteryNormal, api.BatteryControl, api.BatteryNormal},
 
 		{api.BatteryCharge, api.BatteryUnknown, api.BatteryNormal},
 		{api.BatteryCharge, api.BatteryNormal, api.BatteryNormal},
 		{api.BatteryCharge, api.BatteryCharge, api.BatteryNormal},
+		{api.BatteryControl, api.BatteryControl, api.BatteryNormal},
 	} {
 		t.Logf("%+v", tc)
 
