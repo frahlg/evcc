@@ -10,7 +10,11 @@ import (
 )
 
 func batteryModeModified(mode api.BatteryMode) bool {
-	return mode != api.BatteryUnknown && mode != api.BatteryNormal
+	switch mode {
+	case api.BatteryUnknown, api.BatteryNormal, api.BatteryControl:
+		return false
+	}
+	return true
 }
 
 func (site *Site) batteryConfigured() bool {
