@@ -237,19 +237,17 @@ func NewLoadpointFromConfig(log *util.Logger, settings settings.Settings, other 
 		lp.defaultVehicle = dev.Instance()
 	}
 
-	if lp.ChargerRef == "" {
-		return lp, errors.New("missing charger")
+	if lp.ChargerRef != "" {
+		dev, err := config.Chargers().ByName(lp.ChargerRef)
+		if err != nil {
+			return lp, fmt.Errorf("charger: %w", err)
+		}
+		lp.charger = dev.Instance()
+		lp.configureChargerType(lp.charger)
 	}
-
-	dev, err := config.Chargers().ByName(lp.ChargerRef)
-	if err != nil {
-		return lp, fmt.Errorf("charger: %w", err)
-	}
-	lp.charger = dev.Instance()
-	lp.configureChargerType(lp.charger)
 
 	// phase switching defaults based on charger capabilities
-	if !lp.hasPhaseSwitching() {
+	if lp.charger != nil && !lp.hasPhaseSwitching() {
 		lp.phasesConfigured = 3
 		lp.phases = 3
 	}
@@ -575,7 +573,9 @@ func (lp *Loadpoint) evChargeCurrentWrappedMeterHandler(current float64) {
 	}
 
 	// handler only called if charge meter was replaced by dummy
-	lp.chargeMeter.(*wrapper.ChargeMeter).SetPower(power)
+	if wm, ok := lp.chargeMeter.(*wrapper.ChargeMeter); ok {
+		wm.SetPower(power)
+	}
 }
 
 // defaultMode executes the action
@@ -673,13 +673,15 @@ func (lp *Loadpoint) Prepare(site site.API, uiChan chan<- util.Param, pushChan c
 	lp.publish(keys.BatteryBoost, lp.batteryBoost != boostDisabled)
 
 	// read initial charger state to prevent immediately disabling charger
-	if enabled, err := lp.charger.Enabled(); err == nil {
-		if lp.enabled = enabled; enabled {
-			// set defined current for use by pv mode
-			_ = lp.setLimit(lp.effectiveMinCurrent())
+	if lp.charger != nil {
+		if enabled, err := lp.charger.Enabled(); err == nil {
+			if lp.enabled = enabled; enabled {
+				// set defined current for use by pv mode
+				_ = lp.setLimit(lp.effectiveMinCurrent())
+			}
+		} else {
+			lp.log.ERROR.Printf("charger enabled: %v", err)
 		}
-	} else {
-		lp.log.ERROR.Printf("charger enabled: %v", err)
 	}
 
 	// set vehicle polling mode
@@ -703,6 +705,10 @@ func (lp *Loadpoint) setAndPublishEnabled(enabled bool) {
 
 // syncCharger updates charger status and synchronizes it with expectations
 func (lp *Loadpoint) syncCharger() error {
+	if lp.charger == nil {
+		return nil
+	}
+
 	enabled, err := lp.charger.Enabled()
 	if err != nil {
 		return fmt.Errorf("charger enabled: %w", err)
@@ -839,6 +845,9 @@ func (lp *Loadpoint) roundedCurrent(current float64) float64 {
 
 // setLimit applies charger current limits and enables/disables accordingly
 func (lp *Loadpoint) setLimit(current float64) error {
+	if lp.charger == nil {
+		return nil
+	}
 	current = lp.roundedCurrent(current)
 
 	// apply circuit limits
@@ -1064,6 +1073,13 @@ func statusEvents(prevStatus, status api.ChargeStatus) []string {
 // updateChargerStatus updates charger status and detects car connected/disconnected events
 func (lp *Loadpoint) updateChargerStatus() (bool, error) {
 	var welcomeCharge bool
+
+	if lp.charger == nil {
+		if lp.GetStatus() != api.StatusNone {
+			lp.setStatus(api.StatusNone)
+		}
+		return false, nil
+	}
 
 	status, err := lp.charger.Status()
 	if err != nil {
@@ -1483,6 +1499,10 @@ func (lp *Loadpoint) pvMaxCurrent(mode api.ChargeMode, sitePower, batteryBoostPo
 
 // UpdateChargePowerAndCurrents updates charge meter power and currents for load management
 func (lp *Loadpoint) UpdateChargePowerAndCurrents() float64 {
+	if lp.chargeMeter == nil {
+		return 0
+	}
+
 	power, err := backoff.RetryWithData(lp.chargeMeter.CurrentPower, modbus.Backoff())
 	if err == nil {
 		lp.Lock()
