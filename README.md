@@ -38,6 +38,7 @@ Featured in [PV Magazine](https://www.pv-magazine.de/2022/01/14/mit-open-source-
 - logging using [InfluxDB](https://www.influxdata.com) and [Grafana](https://grafana.com/grafana/)
 - [REST](https://docs.evcc.io/en/docs/integrations/rest-api) and [MQTT](https://docs.evcc.io/en/docs/integrations/mqtt-api) APIs for integration with home automation systems
 - Add-ons for [Home Assistant](https://docs.evcc.io/en/docs/integrations/home-assistant) and [OpenHAB](https://www.openhab.org/addons/bindings/evcc) (not maintained by the evcc core team)
+- works without a charger or loadpoint for solar- or battery-only monitoring
 
 ## Getting Started
 

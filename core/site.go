@@ -867,7 +867,49 @@ func (site *Site) updateLoadpoints(rates api.Rates) float64 {
 	return sum
 }
 
+func (site *Site) updateMetersOnly() {
+	site.log.DEBUG.Println("----")
+
+	rates, err := site.plannerRates()
+	if err != nil {
+		site.log.WARN.Println("planner:", err)
+	}
+
+	rate, err := rates.At(time.Now())
+	if rates != nil && err != nil {
+		msg := fmt.Sprintf("no matching rate for: %s", time.Now().Format(time.RFC3339))
+		if len(rates) > 0 {
+			msg += fmt.Sprintf(", %d rates (%s to %s)", len(rates),
+				rates[0].Start.Local().Format(time.RFC3339),
+				rates[len(rates)-1].End.Local().Format(time.RFC3339))
+		}
+		site.log.WARN.Println("planner:", msg)
+	}
+
+	batteryGridChargeActive := site.batteryGridChargeActive(rate)
+	site.publish(keys.BatteryGridChargeActive, batteryGridChargeActive)
+	site.updateBatteryMode(batteryGridChargeActive, rate)
+
+	if _, _, _, err := site.sitePower(0, 0); err == nil {
+		homePower := site.gridPower + max(0, site.pvPower) + site.batteryPower
+		homePower = max(homePower, 0)
+		site.publish(keys.HomePower, homePower)
+
+		greenShare := site.greenShare(0, homePower)
+		site.Health.Update()
+		site.publishTariffs(greenShare, greenShare)
+	} else {
+		site.log.ERROR.Println(err)
+	}
+
+	site.stats.Update(site)
+}
+
 func (site *Site) update(lp updater) {
+	if lp == nil {
+		site.updateMetersOnly()
+		return
+	}
 	site.log.DEBUG.Println("----")
 
 	// smart cost and battery mode handling
@@ -1037,10 +1079,21 @@ func (site *Site) Run(stopC chan struct{}, interval time.Duration) {
 		site.log.WARN.Printf("interval <%.0fs can lead to unexpected behavior, see https://docs.evcc.io/docs/reference/configuration/interval", max.Seconds())
 	}
 
-	loadpointChan := make(chan updater)
-	if len(site.loadpoints) > 0 {
-		go site.loopLoadpoints(loadpointChan)
+	if len(site.loadpoints) == 0 {
+		site.update(nil)
+
+		for tick := time.Tick(interval); ; {
+			select {
+			case <-tick:
+				site.update(nil)
+			case <-stopC:
+				return
+			}
+		}
 	}
+
+	loadpointChan := make(chan updater)
+	go site.loopLoadpoints(loadpointChan)
 
 	site.update(<-loadpointChan) // start immediately
 
