@@ -19,7 +19,7 @@
 					<TopNavigation v-bind="topNavigation" />
 				</div>
 			</div>
-			<Energyflow v-if="loadpoints.length > 0" v-bind="energyflow" />
+                       <Energyflow v-if="!isInitialSetup" v-bind="energyflow" />
 		</div>
 		<div class="d-flex flex-column justify-content-between content-area">
 			<div v-if="fatal" class="flex-grow-1 align-items-center d-flex justify-content-center">
@@ -191,9 +191,14 @@ export default defineComponent({
 			// work in progess
 			return false;
 		},
-		isInitialSetup() {
-			return this.loadpoints.length === 0;
-		},
+               isInitialSetup() {
+                       return (
+                               this.loadpoints.length === 0 &&
+                               !this.gridConfigured &&
+                               !this.pvConfigured &&
+                               !this.batteryConfigured
+                       );
+               },
 		footer() {
 			return {
 				version: {

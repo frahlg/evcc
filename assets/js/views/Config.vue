@@ -479,9 +479,14 @@ export default {
 		return { title: this.$t("config.main.title") };
 	},
 	computed: {
-		loadpointsRequired() {
-			return this.loadpoints.length === 0;
-		},
+               loadpointsRequired() {
+                       return (
+                               this.loadpoints.length === 0 &&
+                               !this.site?.grid &&
+                               (this.site?.pv?.length || 0) === 0 &&
+                               (this.site?.battery?.length || 0) === 0
+                       );
+               },
 		fatalClass() {
 			return store.state?.fatal?.class;
 		},
