@@ -224,15 +224,19 @@ func (t *Template) IdentifierValues(renderMode int, values map[string]interface{
 		return
 	}
 
-	// Add identifier configuration to values for template rendering
-	values["identifier"] = map[string]interface{}{
-		"source": identifierConfig.Source,
-		"register": map[string]interface{}{
-			"address": identifierConfig.Register.Address,
-			"type":    identifierConfig.Register.Type,
-			"decode":  identifierConfig.Register.Decode,
-			"length":  identifierConfig.Register.Length,
-		},
+	// Only add identifier configuration if it's not already in values
+	// This prevents overwriting user-provided identifier values
+	if _, exists := values["identifier"]; !exists {
+		// Add identifier configuration to values for template rendering
+		values["identifier"] = map[string]interface{}{
+			"source": identifierConfig.Source,
+			"register": map[string]interface{}{
+				"address": identifierConfig.Register.Address,
+				"type":    identifierConfig.Register.Type,
+				"decode":  identifierConfig.Register.Decode,
+				"length":  identifierConfig.Register.Length,
+			},
+		}
 	}
 }
 
@@ -359,13 +363,20 @@ func (t *Template) RenderResult(renderMode int, other map[string]any) ([]byte, m
 			}
 
 		default:
-			if res[out] == nil || res[out].(string) == "" {
-				// prevent rendering nil interfaces as "<nil>" string
-				var s string
-				if val != nil {
-					s = p.yamlQuote(fmt.Sprintf("%v", val))
+			// Special handling for identifier field to preserve map structure
+			if out == "identifier" {
+				if res[out] == nil {
+					res[out] = val
 				}
-				res[out] = s
+			} else {
+				if res[out] == nil || res[out].(string) == "" {
+					// prevent rendering nil interfaces as "<nil>" string
+					var s string
+					if val != nil {
+						s = p.yamlQuote(fmt.Sprintf("%v", val))
+					}
+					res[out] = s
+				}
 			}
 		}
 	}

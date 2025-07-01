@@ -1,5 +1,6 @@
 {{- define "identifier" }}
-{{- if and .identifier .identifier.source }}
+{{- if .identifier }}
+{{- if .identifier.source }}
 identifier:
   source: {{ .identifier.source }}
   register:
@@ -9,5 +10,6 @@ identifier:
     {{- if .identifier.register.length }}
     length: {{ .identifier.register.length }}
     {{- end }}
+{{- end }}
 {{- end }}
 {{- end }}
