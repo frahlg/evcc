@@ -14,13 +14,14 @@ func init() {
 	registry.AddCtx(api.Custom, NewConfigurableFromConfig)
 }
 
-//go:generate go tool decorate -f decorateMeter -b api.Meter -t "api.MeterEnergy,TotalEnergy,func() (float64, error)" -t "api.PhaseCurrents,Currents,func() (float64, float64, float64, error)" -t "api.PhaseVoltages,Voltages,func() (float64, float64, float64, error)" -t "api.PhasePowers,Powers,func() (float64, float64, float64, error)" -t "api.Battery,Soc,func() (float64, error)" -t "api.BatteryCapacity,Capacity,func() float64" -t "api.MaxACPowerGetter,MaxACPower,func() float64" -t "api.BatteryController,SetBatteryMode,func(api.BatteryMode) error"
+//go:generate go tool decorate -f decorateMeter -b api.Meter -t "api.MeterEnergy,TotalEnergy,func() (float64, error)" -t "api.PhaseCurrents,Currents,func() (float64, float64, float64, error)" -t "api.PhaseVoltages,Voltages,func() (float64, float64, float64, error)" -t "api.PhasePowers,Powers,func() (float64, float64, float64, error)" -t "api.Battery,Soc,func() (float64, error)" -t "api.BatteryCapacity,Capacity,func() float64" -t "api.MaxACPowerGetter,MaxACPower,func() float64" -t "api.BatteryController,SetBatteryMode,func(api.BatteryMode) error" -t "api.Identifier,Identify,func() (string, error)"
 
 // NewConfigurableFromConfig creates api.Meter from config
 func NewConfigurableFromConfig(ctx context.Context, other map[string]interface{}) (api.Meter, error) {
 	cc := struct {
-		measurement.Energy `mapstructure:",squash"` // energy optional
-		measurement.Phases `mapstructure:",squash"` // optional
+		measurement.Energy     `mapstructure:",squash"` // energy optional
+		measurement.Phases     `mapstructure:",squash"` // optional
+		measurement.Identifier `mapstructure:",squash"` // identifier optional
 
 		// battery
 		batteryCapacity   `mapstructure:",squash"`
@@ -48,6 +49,11 @@ func NewConfigurableFromConfig(ctx context.Context, other map[string]interface{}
 	currentsG, voltagesG, powersG, err := cc.Phases.Configure(ctx)
 	if err != nil {
 		return nil, err
+	}
+
+	identifierG, err := cc.Identifier.Configure(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("identifier: %w", err)
 	}
 
 	m, _ := NewConfigurable(powerG)
@@ -80,7 +86,7 @@ func NewConfigurableFromConfig(ctx context.Context, other map[string]interface{}
 		}
 	}
 
-	res := m.Decorate(energyG, currentsG, voltagesG, powersG, socG, cc.batteryCapacity.Decorator(), cc.batteryMaxACPower.Decorator(), batModeS)
+	res := m.Decorate(energyG, currentsG, voltagesG, powersG, socG, cc.batteryCapacity.Decorator(), cc.batteryMaxACPower.Decorator(), batModeS, identifierG)
 
 	return res, nil
 }
@@ -106,8 +112,9 @@ func (m *Meter) Decorate(
 	batteryCapacity func() float64,
 	maxACPower func() float64,
 	setBatteryMode func(api.BatteryMode) error,
+	identifier func() (string, error),
 ) api.Meter {
-	return decorateMeter(m, totalEnergy, currents, voltages, powers, batterySoc, batteryCapacity, maxACPower, setBatteryMode)
+	return decorateMeter(m, totalEnergy, currents, voltages, powers, batterySoc, batteryCapacity, maxACPower, setBatteryMode, identifier)
 }
 
 // CurrentPower implements the api.Meter interface

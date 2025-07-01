@@ -217,6 +217,30 @@ func (t *Template) ModbusChoices() []string {
 	return nil
 }
 
+// IdentifierValues adds the identifier configuration to the value map for rendering
+func (t *Template) IdentifierValues(renderMode int, values map[string]interface{}) {
+	identifierConfig := t.GetIdentifierConfig()
+	if identifierConfig == nil {
+		return
+	}
+
+	// Add identifier template to render if not already present
+	if !strings.Contains(t.Render, "identifier:") && !strings.Contains(t.Render, "template \"identifier\"") {
+		t.Render = fmt.Sprintf("%s\n{{- template \"identifier\" . }}", t.Render)
+	}
+
+	// Add identifier configuration to values for template rendering
+	values["identifier"] = map[string]interface{}{
+		"source": identifierConfig.Source,
+		"register": map[string]interface{}{
+			"address": identifierConfig.Register.Address,
+			"type":    identifierConfig.Register.Type,
+			"decode":  identifierConfig.Register.Decode,
+			"length":  identifierConfig.Register.Length,
+		},
+	}
+}
+
 //go:embed proxy.tpl
 var proxyTmpl string
 
@@ -288,6 +312,7 @@ func (t *Template) RenderResult(renderMode int, other map[string]any) ([]byte, m
 	}
 
 	t.ModbusValues(renderMode, values)
+	t.IdentifierValues(renderMode, values)
 
 	res := make(map[string]interface{})
 
