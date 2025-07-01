@@ -224,11 +224,6 @@ func (t *Template) IdentifierValues(renderMode int, values map[string]interface{
 		return
 	}
 
-	// Add identifier template to render if not already present
-	if !strings.Contains(t.Render, "identifier:") && !strings.Contains(t.Render, "template \"identifier\"") {
-		t.Render = fmt.Sprintf("%s\n{{- template \"identifier\" . }}", t.Render)
-	}
-
 	// Add identifier configuration to values for template rendering
 	values["identifier"] = map[string]interface{}{
 		"source": identifierConfig.Source,

@@ -300,3 +300,4 @@ render: |
         {{- end }}
   capacity: {{ .capacity }} # kWh
   {{- end }}
+  {{- template "identifier" . }}
