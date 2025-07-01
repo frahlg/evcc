@@ -64,7 +64,7 @@ const (
 var ValidRequirements = []string{RequirementEEBUS, RequirementMQTT, RequirementSponsorship, RequirementSkipTest}
 
 var predefinedTemplateProperties = []string{
-	"type", "template", "name",
+	"type", "template", "name", "identifier",
 	ModbusParamNameId, ModbusParamNameDevice, ModbusParamNameBaudrate, ModbusParamNameComset,
 	ModbusParamNameURI, ModbusParamNameHost, ModbusParamNamePort, ModbusParamNameRTU,
 	ModbusKeyTCPIP, ModbusKeyUDP, ModbusKeyRS485Serial, ModbusKeyRS485TCPIP,
@@ -291,4 +291,38 @@ type TemplateDefinition struct {
 	Linked       []LinkedTemplate `json:",omitempty"` // a list of templates that should be processed as part of the guided setup
 	Params       []Param          `json:",omitempty"`
 	Render       string           `json:"-"` // rendering template
+	// Identifier block for unique device identification
+	Identifier *ModbusRegisterConfig `yaml:"identifier,omitempty" json:"-"`
+	// Serial block for legacy compatibility (alias for identifier)
+	Serial *ModbusRegisterConfig `yaml:"serial,omitempty" json:"-"`
+}
+
+// ModbusRegisterConfig defines a Modbus register configuration for reading device identifiers
+type ModbusRegisterConfig struct {
+	Source   string                 `yaml:"source"`
+	Register ModbusRegisterSettings `yaml:"register"`
+}
+
+// ModbusRegisterSettings defines the Modbus register settings
+type ModbusRegisterSettings struct {
+	Address int    `yaml:"address"`
+	Type    string `yaml:"type"`
+	Decode  string `yaml:"decode"`
+	Length  int    `yaml:"length,omitempty"`
+}
+
+// GetIdentifierConfig returns the effective identifier configuration.
+// If both identifier and serial are present, identifier is preferred and a warning is logged.
+func (t *TemplateDefinition) GetIdentifierConfig() *ModbusRegisterConfig {
+	if t.Identifier != nil && t.Serial != nil {
+		// TODO: Add proper logging here when we have access to logger
+		// For now, we'll just prefer identifier
+		return t.Identifier
+	}
+	
+	if t.Identifier != nil {
+		return t.Identifier
+	}
+	
+	return t.Serial
 }

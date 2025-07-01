@@ -57,6 +57,7 @@ type measurement struct {
 	Capacity      *float64  `json:"capacity,omitempty"`
 	Soc           *float64  `json:"soc,omitempty"`
 	Controllable  *bool     `json:"controllable,omitempty"`
+	Identifier    string    `json:"identifier,omitempty"`
 }
 
 var _ site.API = (*Site)(nil)
@@ -510,11 +511,23 @@ func (site *Site) collectMeters(key string, meters []config.Device[api.Meter]) [
 		}
 
 		props := deviceProperties(dev)
+		
+		// extract identifier if available
+		var identifier string
+		if identifierMeter, ok := meter.(api.Identifier); ok {
+			if id, err := identifierMeter.Identify(); err == nil {
+				identifier = id
+			} else {
+				site.log.DEBUG.Printf("%s %d identifier: %v", key, i+1, err)
+			}
+		}
+		
 		mm[i] = measurement{
-			Title:  props.Title,
-			Icon:   props.Icon,
-			Power:  power,
-			Energy: energy,
+			Title:      props.Title,
+			Icon:       props.Icon,
+			Power:      power,
+			Energy:     energy,
+			Identifier: identifier,
 		}
 
 		wg.Done()
@@ -753,6 +766,15 @@ func (site *Site) updateGridMeter() error {
 			mm.Energy = f
 		} else {
 			site.log.ERROR.Printf("grid energy: %v", err)
+		}
+	}
+
+	// grid identifier
+	if identifierMeter, ok := site.gridMeter.(api.Identifier); ok {
+		if id, err := identifierMeter.Identify(); err == nil {
+			mm.Identifier = id
+		} else {
+			site.log.DEBUG.Printf("grid identifier: %v", err)
 		}
 	}
 
