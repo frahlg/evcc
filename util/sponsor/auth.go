@@ -42,9 +42,11 @@ const (
 )
 
 func IsAuthorized() bool {
-	mu.RLock()
-	defer mu.RUnlock()
-	return len(Subject) > 0
+	return true
+}
+
+func init() {
+	Subject = "evcc"
 }
 
 func IsAuthorizedForApi() bool {

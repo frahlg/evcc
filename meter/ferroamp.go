@@ -32,9 +32,10 @@ type ferroampData struct {
 
 // Ferroamp meter implementation
 type Ferroamp struct {
-	log   *util.Logger
-	usage string
-	data  *ferroampData
+	log    *util.Logger
+	client *mqtt.Client
+	usage  string
+	data   *ferroampData
 	batteryCapacity
 }
 
@@ -102,6 +103,7 @@ func NewFerroamp(mqttconf mqtt.Config, usage string, timeout time.Duration, batC
 
 	m := &Ferroamp{
 		log:             log,
+		client:          client,
 		usage:           usage,
 		data:            data,
 		batteryCapacity: batCap,
@@ -123,7 +125,7 @@ func NewFerroamp(mqttconf mqtt.Config, usage string, timeout time.Duration, batC
 
 	case "pv":
 		return base.Decorate(
-			nil,
+			m.pvEnergy,
 			nil,
 			nil,
 			nil,
@@ -132,10 +134,11 @@ func NewFerroamp(mqttconf mqtt.Config, usage string, timeout time.Duration, batC
 
 	case "battery":
 		return base.DecorateBattery(
-			nil,
+			m.batteryEnergy,
 			m.soc,
 			m.batteryCapacity.Decorator(),
-			nil, nil, nil,
+			nil, nil,
+			m.setBatteryMode,
 		), nil
 
 	default:
@@ -287,4 +290,51 @@ func (m *Ferroamp) soc() (float64, error) {
 		return 0, api.ErrNotAvailable
 	}
 	return soc, nil // already in %
+}
+
+// setBatteryMode implements the api.BatteryController interface
+// Controls the Ferroamp EnergyHub battery via MQTT
+func (m *Ferroamp) setBatteryMode(mode api.BatteryMode) error {
+	var payload string
+
+	switch mode {
+	case api.BatteryNormal:
+		// return to auto mode
+		payload = `{"transId":"evcc","cmd":{"name":"auto","arg":1}}`
+	case api.BatteryHold:
+		// hold: set power to 0 (no charge or discharge)
+		payload = `{"transId":"evcc","cmd":{"name":"charge","arg":0}}`
+	case api.BatteryCharge:
+		// force charge at max power
+		payload = `{"transId":"evcc","cmd":{"name":"charge","arg":10000}}`
+	default:
+		return fmt.Errorf("invalid battery mode: %s", mode)
+	}
+
+	m.log.DEBUG.Printf("set battery mode: %s", mode)
+	m.client.Publish("extapi/control/request", false, payload)
+	return nil
+}
+
+// pvEnergy implements the api.MeterEnergy interface (pv usage)
+func (m *Ferroamp) pvEnergy() (float64, error) {
+	m.data.mu.RLock()
+	defer m.data.mu.RUnlock()
+
+	// wpv: total PV energy produced in mJ
+	mj := extractFloat(m.data.ehub, "wpv")
+	return mjToWh(mj) / 1000, nil // Wh -> kWh
+}
+
+// batteryEnergy implements the api.MeterEnergy interface (battery usage)
+func (m *Ferroamp) batteryEnergy() (float64, error) {
+	m.data.mu.RLock()
+	defer m.data.mu.RUnlock()
+
+	// wbatcons: total energy charged into battery in mJ
+	// wbatprod: total energy discharged from battery in mJ
+	// report sum of both as total energy throughput
+	charged := mjToWh(extractFloat(m.data.ehub, "wbatcons"))
+	discharged := mjToWh(extractFloat(m.data.ehub, "wbatprod"))
+	return (charged + discharged) / 1000, nil // Wh -> kWh
 }
