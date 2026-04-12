@@ -1,0 +1,35 @@
+template: ferroamp
+covers: ["ferroamp"]
+products:
+  - brand: Ferroamp
+    description:
+      generic: EnergyHub
+requirements:
+  description:
+    de: Die externe MQTT-API muss auf dem EnergyHub aktiviert sein. Der MQTT-Broker läuft auf dem EnergyHub.
+    en: The external MQTT API must be enabled on the EnergyHub. The MQTT broker runs on the EnergyHub.
+params:
+  - name: usage
+    choice: ["grid", "pv", "battery"]
+  - name: host
+    help:
+      de: IP-Adresse oder Hostname des EnergyHub
+      en: IP address or hostname of the EnergyHub
+  - name: port
+    default: 1883
+    advanced: true
+  - name: user
+    default: extapi
+    advanced: true
+  - name: password
+    default: ferroampExtApi
+    advanced: true
+  - name: capacity
+    advanced: true
+render: |
+  type: ferroamp
+  broker: {{ .host }}:{{ .port }}
+  user: {{ .user }}
+  password: {{ .password }}
+  usage: {{ .usage }}
+  capacity: {{ .capacity }}
