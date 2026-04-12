@@ -1,0 +1,24 @@
+template: ambibox
+covers: ["ambibox"]
+products:
+  - brand: Ambibox
+    description:
+      generic: ambiCHARGE 11kW Home BiDi DC Wallbox
+requirements:
+  description:
+    de: Modbus TCP muss in der sidOS-Konfiguration aktiviert sein. Die Wallbox muss sich im gleichen Netzwerk befinden.
+    en: Modbus TCP must be enabled in the sidOS configuration. The wallbox must be on the same network.
+params:
+  - name: host
+  - name: port
+    default: 502
+  - name: connector
+    default: 1
+    advanced: true
+    description:
+      de: Connector-Nummer (1-5)
+      en: Connector number (1-5)
+render: |
+  type: ambibox
+  uri: {{ joinHostPort .host .port }}
+  connector: {{ .connector }}
