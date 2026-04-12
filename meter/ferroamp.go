@@ -3,6 +3,7 @@ package meter
 import (
 	"encoding/json"
 	"fmt"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -156,24 +157,27 @@ func extractVal(data map[string]any, key string) (any, bool) {
 	return field, true
 }
 
+// toFloat converts any value to float64 (handles both numeric and string JSON values)
+func toFloat(val any) float64 {
+	switch v := val.(type) {
+	case float64:
+		return v
+	case string:
+		f, err := strconv.ParseFloat(v, 64)
+		if err == nil {
+			return f
+		}
+	}
+	return 0
+}
+
 // extractFloat extracts a float64 value
 func extractFloat(data map[string]any, key string) float64 {
 	val, ok := extractVal(data, key)
 	if !ok {
 		return 0
 	}
-	switch v := val.(type) {
-	case float64:
-		return v
-	case string:
-		f, _ := fmt.Sscanf(v, "%f", new(float64))
-		if f > 0 {
-			var result float64
-			fmt.Sscanf(v, "%f", &result)
-			return result
-		}
-	}
-	return 0
+	return toFloat(val)
 }
 
 // extractPhaseVal extracts a per-phase value from {"L1": v1, "L2": v2, "L3": v3}
@@ -196,10 +200,7 @@ func extractPhaseVal(data map[string]any, key, phase string) float64 {
 	}
 
 	if v, ok := inner[phase]; ok {
-		switch tv := v.(type) {
-		case float64:
-			return tv
-		}
+		return toFloat(v)
 	}
 	return 0
 }
@@ -228,9 +229,8 @@ func (m *Ferroamp) currentPower() (float64, error) {
 
 	case "pv":
 		// ppv: total solar power (W), Ferroamp reports as positive
-		// evcc convention: PV power is negative (generation)
-		pv := extractFloat(m.data.ehub, "ppv")
-		return -pv, nil
+		// evcc convention: PV power is positive
+		return extractFloat(m.data.ehub, "ppv"), nil
 
 	case "battery":
 		// pbat: battery power (W)
@@ -248,8 +248,8 @@ func (m *Ferroamp) totalEnergy() (float64, error) {
 	m.data.mu.RLock()
 	defer m.data.mu.RUnlock()
 
-	// wextconsq3p: total grid import energy in mJ
-	mj := extractFloat(m.data.ehub, "wextconsq3p")
+	// wextconsq_3p: total grid import energy in mJ
+	mj := extractFloat(m.data.ehub, "wextconsq_3p")
 	return mjToWh(mj) / 1000, nil // Wh -> kWh
 }
 
